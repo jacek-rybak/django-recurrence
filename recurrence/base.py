@@ -840,8 +840,11 @@ def serialize(rule_or_recurrence):
         A rfc2445 formatted unicode string.
     """
     def serialize_dt(dt):
-        # striped time info since we only need a date
-        return dt.strftime('%Y%m%dT000000') if isinstance(dt, datetime.datetime) else None
+        return u'%s%s%sT000000' % (
+            str(dt.year).rjust(4, '0'),
+            str(dt.month).rjust(2, '0'),
+            str(dt.day).rjust(2, '0'),
+        )
 
     def serialize_rule(rule):
         values = []
