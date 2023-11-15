@@ -973,7 +973,17 @@ def deserialize(text, include_dtstart=True):
             # just use the time zone specified in the Django settings.
             tzinfo = get_current_timezone()
 
-        return tzinfo.localize(datetime.datetime(year, month, day, hour, minute, second))
+        dt = datetime.datetime(
+            year, month, day, hour, minute, second, tzinfo=tzinfo)
+
+        if settings.deserialize_tz():
+            return dt
+
+        dt = dt.astimezone(get_current_timezone())
+
+        # set tz to settings.TIME_ZONE and return offset-naive datetime
+        return datetime.datetime(
+            dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
 
     dtstart, dtend, rrules, exrules, rdates, exdates = None, None, [], [], [], []
 
