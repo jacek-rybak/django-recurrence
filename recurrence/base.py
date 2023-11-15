@@ -840,15 +840,8 @@ def serialize(rule_or_recurrence):
         A rfc2445 formatted unicode string.
     """
     def serialize_dt(dt):
-        dt = to_utc(dt)
-        return u'%s%s%sT%s%s%sZ' % (
-            str(dt.year).rjust(4, '0'),
-            str(dt.month).rjust(2, '0'),
-            str(dt.day).rjust(2, '0'),
-            str(dt.hour).rjust(2, '0'),
-            str(dt.minute).rjust(2, '0'),
-            str(dt.second).rjust(2, '0'),
-        )
+        # striped time info since we only need a date
+        return dt.strftime('%Y%m%dT000000') if isinstance(dt, datetime.datetime) else None
 
     def serialize_rule(rule):
         values = []
@@ -980,17 +973,7 @@ def deserialize(text, include_dtstart=True):
             # just use the time zone specified in the Django settings.
             tzinfo = get_current_timezone()
 
-        dt = datetime.datetime(
-            year, month, day, hour, minute, second, tzinfo=tzinfo)
-
-        if settings.deserialize_tz():
-            return dt
-
-        dt = dt.astimezone(get_current_timezone())
-
-        # set tz to settings.TIME_ZONE and return offset-naive datetime
-        return datetime.datetime(
-            dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
+        return tzinfo.localize(datetime.datetime(year, month, day, hour, minute, second))
 
     dtstart, dtend, rrules, exrules, rdates, exdates = None, None, [], [], [], []
 
