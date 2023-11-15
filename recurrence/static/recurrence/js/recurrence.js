@@ -571,9 +571,9 @@ recurrence.serialize = function(rule_or_recurrence) {
                 return initial;
             }
         };
-        return pad(dt.year, 4) +
-            pad(dt.month + 1, 2) +
-            pad(dt.date, 2) + 'T' +
+        return pad(dt.getFullYear(), 4) +
+            pad(dt.getMonth() + 1, 2) +
+            pad(dt.getDate(), 2) + 'T' +
             pad(0, 2) +
             pad(0, 2) +
             pad(0, 2);
